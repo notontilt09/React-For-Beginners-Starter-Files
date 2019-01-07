@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Header from './Header';
 import Order from './Order';
 import Inventory from './Inventory';
@@ -11,6 +12,10 @@ class App extends React.Component {
         fishes: {},
         order: {}
     };
+
+    static propTypes = {
+        match: PropTypes.object
+    }
 
     componentDidMount() {
         // first reinstate our localStorage
@@ -52,6 +57,18 @@ class App extends React.Component {
         this.setState({fishes: fishes});
     }
 
+    deleteFish = key => {
+        // 1. Take a copy of state
+        const fishes = {...this.state.fishes};
+        // 2. update the state
+        fishes[key] = null;
+        // 3. update state
+        this.setState({
+            fishes: fishes
+        })
+        
+    }
+
     loadSampleFishes = () => {
         this.setState({
             fishes: sampleFishes
@@ -69,6 +86,14 @@ class App extends React.Component {
         })
     }
 
+    removeFromOrder = key => {
+        const order = {...this.state.order};
+        delete order[key];
+        this.setState({
+            order: order
+        })
+    }
+
     render() {
         return (
             <div className="catch-of-the-day">
@@ -81,12 +106,14 @@ class App extends React.Component {
                 <Order 
                     fishes={this.state.fishes}
                     order={this.state.order}
+                    removeFromOrder={this.removeFromOrder}
                 />
                 <Inventory 
                     addFish={this.addFish} 
                     loadSampleFishes={this.loadSampleFishes} 
                     fishes={this.state.fishes}
                     updateFish={this.updateFish}
+                    deleteFish={this.deleteFish}
                 />
             </div>
         )
